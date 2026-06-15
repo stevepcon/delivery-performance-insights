@@ -669,7 +669,7 @@ function EmptyBanner() {
       <h2 className="text-base font-semibold text-foreground">No shipment data loaded</h2>
       <p className="text-sm text-muted-foreground mt-1">
         Click <span className="font-medium text-foreground">Sync Data</span> in the header to fetch
-        demo shipments from the live API.
+        demo data from the API.
       </p>
     </div>
   );
