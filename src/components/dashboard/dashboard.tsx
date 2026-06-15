@@ -611,9 +611,9 @@ export function Dashboard() {
                 )
               </p>
               <p>
-                The app uses mock data based on realistic shipment and carrier data models,
-                allowing users to explore common logistics KPIs, delivery performance metrics,
-                and carrier comparisons in a safe demonstration environment.
+                The application is powered by realistic mock shipment and carrier datasets
+                exposed through a custom API, demonstrating how operational logistics data can
+                be integrated, processed, and visualised in a modern web application.
               </p>
               <div className="space-y-1.5">
                 <p className="font-bold">Technology Stack</p>
