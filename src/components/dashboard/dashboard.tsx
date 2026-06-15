@@ -8,17 +8,23 @@ import {
   Truck,
   Package,
   Building2,
-  Download,
   RefreshCw,
   RotateCcw,
   Moon,
   Sun,
   Lightbulb,
   Gauge,
+  Info as InfoIcon,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   Select,
   SelectContent,
@@ -47,9 +53,7 @@ import {
   applyFilters,
   carrierBreakdown,
   computeKpis,
-  downloadCsv,
   generateInsights,
-  toCsv,
   uniqueCarriers,
   volumeByDay,
   type Filters,
@@ -86,6 +90,7 @@ export function Dashboard() {
     range: "all",
   });
   const [dark, setDark] = useState(false);
+  const [aboutOpen, setAboutOpen] = useState(true);
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", dark);
@@ -126,15 +131,6 @@ export function Dashboard() {
     toast("Dashboard reset", { description: "All loaded data has been cleared." });
   };
 
-  const handleExport = () => {
-    if (!filtered.length) {
-      toast.error("Nothing to export");
-      return;
-    }
-    downloadCsv(`shipments-${Date.now()}.csv`, toCsv(filtered));
-    toast.success(`Exported ${filtered.length} rows`);
-  };
-
   const successData = [
     { name: "Successful", value: Math.round(kpis.successRate * filtered.length) },
     { name: "Failed", value: Math.round(kpis.failureRate * filtered.length) },
@@ -148,6 +144,12 @@ export function Dashboard() {
       ),
     },
   ].filter((d) => d.value > 0);
+
+  const SUCCESS_COLORS: Record<string, string> = {
+    Successful: "var(--chart-2)",
+    Failed: "var(--chart-3)",
+    "In progress": "var(--chart-1)",
+  };
 
   const carrierSuccessData = breakdown.map((r) => ({
     carrier: r.carrier.toUpperCase(),
@@ -180,25 +182,24 @@ export function Dashboard() {
                   Delivery Performance Insights
                 </h1>
                 <p className="text-xs text-muted-foreground truncate">
-                  Live shipment analytics · {lastSync ? `Last synced: ${formatTimestamp(lastSync)}` : "Not synced yet"}
+                  {lastSync ? `Last synced: ${formatTimestamp(lastSync)}` : "Not synced yet"}
                 </p>
               </div>
             </div>
             <div className="flex items-center gap-2 flex-wrap">
+              <button
+                onClick={() => setAboutOpen(true)}
+                className="h-9 inline-flex items-center gap-2 px-3 rounded-lg border border-border bg-card text-sm hover:bg-secondary transition-colors"
+              >
+                <InfoIcon className="h-4 w-4" />
+                About
+              </button>
               <button
                 onClick={() => setDark((d) => !d)}
                 className="h-9 w-9 inline-flex items-center justify-center rounded-lg border border-border bg-card hover:bg-secondary transition-colors"
                 aria-label="Toggle dark mode"
               >
                 {dark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-              </button>
-              <button
-                onClick={handleExport}
-                disabled={empty}
-                className="h-9 inline-flex items-center gap-2 px-3 rounded-lg border border-border bg-card text-sm hover:bg-secondary transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-              >
-                <Download className="h-4 w-4" />
-                Export CSV
               </button>
               <button
                 onClick={handleReset}
@@ -369,7 +370,7 @@ export function Dashboard() {
                     stroke="none"
                   >
                     {successData.map((_, i) => (
-                      <Cell key={i} fill={PASTEL[i % PASTEL.length]} />
+                      <Cell key={i} fill={SUCCESS_COLORS[successData[i].name] ?? PASTEL[i % PASTEL.length]} />
                     ))}
                   </Pie>
                   <RTooltip
@@ -589,15 +590,41 @@ export function Dashboard() {
             </ChartCard>
           </section>
 
-          <footer className="pt-4 pb-10 text-center text-xs text-muted-foreground space-y-1">
-            <div className="font-medium text-foreground">Created by S.Conway</div>
-            <div>
-              This dashboard visualises shipment performance metrics using data fetched from a live
-              API connected to Google Sheets.
-            </div>
-          </footer>
         </main>
         <Toaster richColors position="bottom-right" />
+        <Dialog open={aboutOpen} onOpenChange={setAboutOpen}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="font-bold">About</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 text-sm text-foreground leading-relaxed">
+              <p>
+                This demo application was built by Steven Conway (
+                <a
+                  href="https://www.linkedin.com/in/steven-conway"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[oklch(0.45_0.08_240)] underline underline-offset-2 hover:no-underline"
+                >
+                  LinkedIn
+                </a>
+                )
+              </p>
+              <p>
+                The app uses mock data based on realistic shipment and carrier data models,
+                allowing users to explore common logistics KPIs, delivery performance metrics,
+                and carrier comparisons in a safe demonstration environment.
+              </p>
+              <div className="space-y-1.5">
+                <p className="font-bold">Technology Stack</p>
+                <ul className="list-disc pl-5 space-y-1">
+                  <li>Web application built with Lovable</li>
+                  <li>API built using Claude and Google Apps Script</li>
+                </ul>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </TooltipProvider>
   );
