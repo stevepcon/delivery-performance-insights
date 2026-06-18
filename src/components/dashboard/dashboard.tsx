@@ -96,6 +96,11 @@ export function Dashboard() {
     document.documentElement.classList.toggle("dark", dark);
   }, [dark]);
 
+  useEffect(() => {
+    handleSync();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const filtered = useMemo(() => applyFilters(shipments, filters), [shipments, filters]);
   const kpis = useMemo(() => computeKpis(filtered), [filtered]);
   const carriers = useMemo(() => uniqueCarriers(shipments), [shipments]);
