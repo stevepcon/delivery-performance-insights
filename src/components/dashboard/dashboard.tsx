@@ -184,7 +184,7 @@ export function Dashboard() {
               </div>
               <div className="min-w-0">
                 <h1 className="text-base sm:text-lg font-semibold tracking-tight text-foreground truncate">
-                  Delivery Performance Insights
+                  Freight Sight - Delivery Performance Insights
                 </h1>
                 <p className="text-xs text-muted-foreground truncate">
                   {lastSync ? `Last synced: ${formatTimestamp(lastSync)}` : "Not synced yet"}
