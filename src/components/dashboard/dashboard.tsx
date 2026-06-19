@@ -616,9 +616,10 @@ export function Dashboard() {
                 )
               </p>
               <p>
-                The application is powered by realistic mock shipment and carrier datasets
-                exposed through a custom API, demonstrating how operational logistics data can
-                be integrated, processed, and visualised in a modern web application.
+                The application is powered by a custom API layer and mock database to simulate
+                realistic delivery performance data, and demonstrates how easily operational
+                logistics data can be integrated, processed, and visualised in a web
+                application.
               </p>
               <div className="space-y-1.5">
                 <p className="font-bold">Technology Stack</p>
