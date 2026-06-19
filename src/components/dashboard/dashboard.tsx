@@ -617,8 +617,8 @@ export function Dashboard() {
               </p>
               <p>
                 The application is powered by a custom API layer and mock database to simulate
-                realistic delivery performance data, and demonstrates how easily operational
-                logistics data can be integrated, processed, and visualised in a web
+                realistic delivery performance data, and demonstrates how easily such
+                data can be integrated, processed, and visualised in a web
                 application.
               </p>
               <div className="space-y-1.5">
