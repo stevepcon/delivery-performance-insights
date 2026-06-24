@@ -1,0 +1,6 @@
+[
+  { "carrier": "DHL",    "delayedShipments": 8,  "totalShipments": 120 },
+  { "carrier": "GLS",    "delayedShipments": 41, "totalShipments": 110 },
+  { "carrier": "UPS",    "delayedShipments": 19, "totalShipments": 95  },
+  { "carrier": "Hermes", "delayedShipments": 3,  "totalShipments": 80  }
+]
