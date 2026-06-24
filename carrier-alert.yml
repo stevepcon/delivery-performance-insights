@@ -1,0 +1,35 @@
+name: Carrier Performance Alert
+
+# Trigger: same idea as a Make.com "watch" trigger, just two options combined.
+# - schedule: runs automatically on a cron (like a scheduled scenario)
+# - workflow_dispatch: adds a manual "Run workflow" button in the GitHub UI,
+#   so you can demo it on-demand in an interview without waiting for the cron
+on:
+  schedule:
+    - cron: '0 8 * * *'   # every day at 08:00 UTC
+  workflow_dispatch:
+
+# Permissions: the job needs to create/edit issues, so we grant that explicitly.
+# This is the GitHub Actions equivalent of an API scope/credential.
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  check-carrier-performance:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run carrier performance check
+        env:
+          # GITHUB_TOKEN is auto-provided by Actions — no secret to set up manually.
+          # The gh CLI picks this up automatically via GH_TOKEN.
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/check-carriers.js
