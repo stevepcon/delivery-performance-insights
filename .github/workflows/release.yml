@@ -1,0 +1,41 @@
+name: Release
+
+on:
+  pull_request:       # runs when a pr is created or updated
+    branches:
+      - main
+  push:               # runs when a commit is pushed, like merging a pr
+    branches:
+      - main
+
+jobs:
+  release:
+    runs-on: ubuntu-latest    # the virtual machine that executes the job
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Bump version and push tag
+      uses: mathieudutour/github-tag-action@v6.1  # Action
+      id: tag_version
+      with:      # Use the above action and include this data
+        default_bump: patch
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        dry_run: ${{ github.event_name == 'pull_request' }}
+        tag_prefix: v  # Assigns a prefix before the tag version number
+
+     - name: Comment on PR   # if expression references id of steps above for bump version
+       if: ${{ github.event_name == 'pull_request' && steps.tag_version.outputs.new_tag != '' }}  # if it is a pr and if the new tag is not empty, then comment on the pr about next release
+       uses: peter-evans/create-or-update-comment@v3  # Action
+       with:     # Use the above action and include this data
+         issue-number: ${{ github.event.pull_request.number }}
+         body: |
+           **Next Release:** 🚀 ${{ steps.tag_version.outputs.new_tag }}
+
+     - name: Create a GitHub release
+       uses: ncipollo/release-action@v1  # Action
+       if: ${{ github.event_name != 'pull_request' && steps.tag_version.outputs.new_tag != '' }} # if not a pr and tag is not empty, then use the action and do the following
+       with:      # Use the above action and include this data
+         tag: ${{ steps.tag_version.outputs.new_tag }}               # get labels version
+         name: Release ${{ steps.tag_version.outputs.new_tag }}      # e.g name release as "Release v2.1"
+         body: ${{ steps.tag_version.outputs.changelog }}            # get changelog of tag and provide as body of release
